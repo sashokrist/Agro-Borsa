@@ -26,8 +26,7 @@
                                         <th scope="col">Product</th>
                                         <th scope="col">Name</th>
                                         <th scope="col">Description</th>
-                                        <th scope="col">Amount</th>
-                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Amount/Quantity</th>
                                         <th scope="col">Price</th>
                                         <th scope="col">Location</th>
                                         <th scope="col">Action</th>
@@ -44,19 +43,13 @@
                                                 {{ $offer->description }}
                                             </td>
                                             <td>
-                                                {{ $offer->amount }}
-                                            </td>
-                                            <td>
-                                                {{ $offer->quantity }}
+                                                {{ $offer->amount }}  {{ $offer->quantity }}.
                                             </td>
                                             <td>
                                                 {{ $offer->price }}
                                             </td>
                                             <td>
                                                 {{ $offer->location }}
-                                            </td>
-                                            <td>
-
                                             </td>
                                             <td>
                                                 <div class="">
@@ -74,8 +67,17 @@
                                                            data-bs-target="#showOfferModal">Show</a>
                                                     </div>
                                                     <div class="col-sm-6">
-                                                        <a href="#" class="btn btn-primary btn-edit" data-bs-toggle="modal"
-                                                           data-bs-target="#editModal">Edit</a>
+                                                        <a href="javascript:void(0)" id="show-offer"  class="btn btn-primary btn-show"
+                                                           data-id="{{ $offer->id }}"
+                                                           data-name="{{ $offer->name }}"
+                                                           data-description="{{ $offer->description }}"
+                                                           data-item-id="{{ $offer->item->id }}"
+                                                           data-quantity="{{ $offer->quantity }}"
+                                                           data-amount="{{ $offer->amount }}"
+                                                           data-price="{{ $offer->price }}"
+                                                           data-location="{{ $offer->location }}"
+                                                           data-bs-toggle="modal"
+                                                           data-bs-target="#editOfferModal">Edit</a>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <form action="{{ route('offers.destroy', $offer->id) }}"
@@ -189,6 +191,71 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="editOfferModal" tabindex="-1" role="dialog" aria-labelledby="editOfferModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editOfferModal">Edit Offer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="editOfferForm">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="user_id">User</label>
+                            <input type="text" class="form-control" id="user_id" name="user_id"
+                                   value="{{ Auth::user()->name }}" readonly>
+                        </div>
+                        <div class="mb-6 ">
+                            <label class="form-label">Select Category</label>
+                            <select id="quantity" name="quantity" class="form-control">
+                                @foreach ($items as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{$offer->name}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <input type="text" class="form-control" id="description" name="description" value="{{$offer->description}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="number" class="form-control" id="amount" name="amount" value="{{$offer->amount}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Quantity</label>
+                            <select class="form-select" id="quantity" name="quantity" aria-label="Quantity">
+                                <option value="kg" selected>kg</option>
+                                <option value="l">l</option>
+                                <option value="number">number</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price</label>
+                            <input type="number" class="form-control" id="price" name="price" value="{{$offer->price}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" value="{{$offer->location}}">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="closeModalBtn" class="btn btn-secondary closeModal"
+                                    data-dismiss="modal">Close
+                            </button>
+                            <button type="submit" class="btn btn-primary">Edit Offer</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <script>
         setTimeout(function () {
             $('.alert-success').fadeOut('slow');
@@ -264,6 +331,60 @@
                 // Reset the offer details when the modal is closed
                 $('#name').text('');
                 $('#description').text('');
+            });
+        });
+
+        $(document).ready(function () {
+            // Handle edit button click
+            $('.btn-edit').click(function () {
+                var offerId = $(this).data('offer-id');
+                var offerName = $(this).data('offer-name');
+                var offerDescription = $(this).data('offer-description');
+                var offerAmount = $(this).data('offer-amount');
+                var offerQuantity = $(this).data('offer-quantity');
+                var offerPrice = $(this).data('offer-price');
+                var offerLocation = $(this).data('offer-location');
+
+                // Populate modal with offer details
+                $('#editOfferId').val(offerId);
+                $('#user_id').val('{{ Auth::user()->name }}');
+                $('#name').val(offerName);
+                $('#description').val(offerDescription);
+                $('#amount').val(offerAmount);
+                $('#quantity').val(offerQuantity);
+                $('#price').val(offerPrice);
+                $('#location').val(offerLocation);
+
+                // Show the modal
+                $('#editOfferModal').modal('show');
+            });
+
+            // Handle form submission
+            $('#editOfferForm').submit(function (event) {
+                event.preventDefault();
+
+                var offerId = $('#editOfferId').val();
+
+                $.ajax({
+                    type: 'PUT',
+                    url: '/offers.update/' + offerId,
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        // Show success message or perform any other actions
+                        // Hide the modal
+                        $('#editOfferModal').modal('hide');
+                        // Refresh the page or update the offer data as needed
+                    },
+                    error: function (error) {
+                        // Handle error
+                    }
+                });
+            });
+
+            // Handle close button click
+            $('.closeModal').click(function () {
+                $('#editOfferForm')[0].reset(); // Reset the form
+                $('#editOfferModal').modal('hide');
             });
         });
     </script>
