@@ -189,14 +189,15 @@
             </div>
         </div>
     </div>
+    <script>
+        setTimeout(function () {
+            $('.alert-success').fadeOut('slow');
+        }, 9000);
+    </script>
 @endsection
 
 @section('scripts')
     <script type="text/javascript">
-        setTimeout(function () {
-            $('.alert').fadeOut('slow');
-        }, 9000);
-
         $(document).ready(function () {
             $(".closeModal").click(function (e) {
                 e.preventDefault();
