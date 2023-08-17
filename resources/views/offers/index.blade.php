@@ -74,7 +74,7 @@
                                                            data-bs-target="#showOfferModal">Show</a>
                                                     </div>
                                                     <div class="col-sm-6">
-                                                        <a href="#" class="btn btn-primary" data-bs-toggle="modal"
+                                                        <a href="#" class="btn btn-primary btn-edit" data-bs-toggle="modal"
                                                            data-bs-target="#editModal">Edit</a>
                                                     </div>
                                                     <div class="col-sm-6">
