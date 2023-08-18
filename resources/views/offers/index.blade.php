@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @section('content')
     <div class="container">
         @if(session('status'))
@@ -19,7 +20,6 @@
                         </div>
                         <br>
                         <div class="row">
-                            <div class="table-responsive">
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
@@ -37,7 +37,7 @@
                                         <tr>
                                             <th scope="row">{{ $offer->item->name }}</th>
                                             <td>
-                                                {{ $offer->name }}
+                                                {{ $offer->name }} id: {{ $offer->id }}
                                             </td>
                                             <td>
                                                 {{ $offer->description }}
@@ -54,31 +54,11 @@
                                             <td>
                                                 <div class="">
                                                     <div class="col-sm-6">
-                                                        <a href="javascript:void(0)" id="show-offer"  class="btn btn-primary btn-show"
-                                                           data-id="{{ $offer->id }}"
-                                                           data-name="{{ $offer->name }}"
-                                                           data-description="{{ $offer->description }}"
-                                                           data-item-id="{{ $offer->item->id }}"
-                                                           data-quantity="{{ $offer->quantity }}"
-                                                           data-amount="{{ $offer->amount }}"
-                                                           data-price="{{ $offer->price }}"
-                                                           data-location="{{ $offer->location }}"
-                                                           data-bs-toggle="modal"
-                                                           data-bs-target="#showOfferModal">Show</a>
+                                                        <!-- Button trigger modal -->
+                                                            <a href="{{ route('offers.show', $offer->id) }}" class="btn btn-primary">Show</a>
+
                                                     </div>
-                                                    <div class="col-sm-6">
-                                                        <a href="javascript:void(0)" id="show-offer"  class="btn btn-primary btn-show"
-                                                           data-id="{{ $offer->id }}"
-                                                           data-name="{{ $offer->name }}"
-                                                           data-description="{{ $offer->description }}"
-                                                           data-item-id="{{ $offer->item->id }}"
-                                                           data-quantity="{{ $offer->quantity }}"
-                                                           data-amount="{{ $offer->amount }}"
-                                                           data-price="{{ $offer->price }}"
-                                                           data-location="{{ $offer->location }}"
-                                                           data-bs-toggle="modal"
-                                                           data-bs-target="#editOfferModal">Edit</a>
-                                                    </div>
+
                                                     <div class="col-sm-6">
                                                         <form action="{{ route('offers.destroy', $offer->id) }}"
                                                               method="POST">
@@ -93,34 +73,29 @@
                                     @endforeach
                                     </tbody>
                                 </table> {{ $offers->links('pagination::bootstrap-5') }}
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Show Offer Modal -->
-    <div class="modal fade" id="showOfferModal" tabindex="-1" role="dialog" aria-labelledby="showOfferModalLabel"
-         aria-hidden="true">
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="showOfferModalLabel">Offer Details</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- Display offer details here -->
-                    <h4><strong>Product:</strong> <span id="offer-item-id">{{ $offer->item->name }}</span></h4>
-                    <h4><strong>Name:</strong> <span id="name">{{ $offer->name }}</span></h4>
-                    <h4><strong>Description:</strong> <span id="description">{{ $offer->description }}</span></h4>
-                    <h4><strong>Amount:</strong> <span id="amount">{{ $offer->amount }}</span></h4>
-                    <h4><strong>Quantity:</strong> <span id="quantity">{{ $offer->quantity }}</span></h4>
-                    <h4><strong>Price:</strong> <span id="price">{{ $offer->price }}</span></h4>
-                    <h4><strong>Location:</strong> <span id="location">{{ $offer->location }}</span></h4>
-                    <!-- Add more offer details as needed -->
+                    <div class="modal-body">
+                        @include('offers.edit')
+                        <!-- Add more offer details as needed -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -256,6 +231,7 @@
             </div>
         </div>
     </div>
+    <script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
     <script>
         setTimeout(function () {
             $('.alert-success').fadeOut('slow');
@@ -265,6 +241,16 @@
 
 @section('scripts')
     <script type="text/javascript">
+        $('#exampleModal').on('show', function(e) {
+            var link     = e.relatedTarget(),
+                modal    = $(this),
+                name = link.data("name"),
+                id    = link.data("id");
+
+            modal.find("#name").val(name);
+            modal.find("#id").val(id);
+        });
+
         $(document).ready(function () {
             $(".closeModal").click(function (e) {
                 e.preventDefault();
@@ -301,90 +287,6 @@
                         // Handle error
                     }
                 });
-            });
-
-            // Show Offer Modal
-            $('.btn-show').click(function () {
-                var offerId = $(this).data('offer-id');
-                var product = $(this).data('item-id');
-                var name = $(this).data('offer-name');
-                var description = $(this).data('offer-description');
-                var amount = $(this).data('offer-amount');
-                var quantity = $(this).data('offer-quantity');
-                var price = $(this).data('offer-price');
-                var location = $(this).data('offer-location');
-
-                console.log(offerId);
-
-
-                // Populate modal with offer details
-                $('#item-id').text(product);
-                $('#name').text(name);
-                $('#description').text(description);
-                $(e.currentTarget).find('input[name="user_id"]').val(offerId);
-                // Show the modal
-                $('#showOfferModal').modal('show');
-            });
-
-            // Handle modal hidden event
-            $('#showOfferModal').on('hidden.bs.modal', function () {
-                // Reset the offer details when the modal is closed
-                $('#name').text('');
-                $('#description').text('');
-            });
-        });
-
-        $(document).ready(function () {
-            // Handle edit button click
-            $('.btn-edit').click(function () {
-                var offerId = $(this).data('offer-id');
-                var offerName = $(this).data('offer-name');
-                var offerDescription = $(this).data('offer-description');
-                var offerAmount = $(this).data('offer-amount');
-                var offerQuantity = $(this).data('offer-quantity');
-                var offerPrice = $(this).data('offer-price');
-                var offerLocation = $(this).data('offer-location');
-
-                // Populate modal with offer details
-                $('#editOfferId').val(offerId);
-                $('#user_id').val('{{ Auth::user()->name }}');
-                $('#name').val(offerName);
-                $('#description').val(offerDescription);
-                $('#amount').val(offerAmount);
-                $('#quantity').val(offerQuantity);
-                $('#price').val(offerPrice);
-                $('#location').val(offerLocation);
-
-                // Show the modal
-                $('#editOfferModal').modal('show');
-            });
-
-            // Handle form submission
-            $('#editOfferForm').submit(function (event) {
-                event.preventDefault();
-
-                var offerId = $('#editOfferId').val();
-
-                $.ajax({
-                    type: 'PUT',
-                    url: '/offers.update/' + offerId,
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        // Show success message or perform any other actions
-                        // Hide the modal
-                        $('#editOfferModal').modal('hide');
-                        // Refresh the page or update the offer data as needed
-                    },
-                    error: function (error) {
-                        // Handle error
-                    }
-                });
-            });
-
-            // Handle close button click
-            $('.closeModal').click(function () {
-                $('#editOfferForm')[0].reset(); // Reset the form
-                $('#editOfferModal').modal('hide');
             });
         });
     </script>
