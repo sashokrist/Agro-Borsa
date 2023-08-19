@@ -7,7 +7,17 @@
                 {{ session('status') }}
             </div>
         @endif
-        <div class="row justify-content-center">
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header text-center"><h1>{{ __('Offers Dashboard') }}</h1></div>
@@ -23,43 +33,46 @@
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
+                                        <th scope="col">Offer/User</th>
                                         <th scope="col">Product</th>
-                                        <th scope="col">Name</th>
                                         <th scope="col">Description</th>
                                         <th scope="col">Amount/Quantity</th>
                                         <th scope="col">Price</th>
                                         <th scope="col">Location</th>
+                                        <th scope="col">Published</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     @foreach($offers as $offer)
                                         <tr>
-                                            <th scope="row">{{ $offer->item->name }}</th>
-                                            <td>
-                                                {{ $offer->name }} id: {{ $offer->id }}
-                                            </td>
-                                            <td>
+                                            <th>
+                                                {{ $offer->name }} <br> (ID: {{ $offer->id }}) by {{ $offer->user->name }}
+                                            </th>
+                                            <th>
+                                                {{ $offer->item->name }}
+                                            </th>
+                                            <th>
                                                 {{ $offer->description }}
-                                            </td>
-                                            <td>
+                                            </th>
+                                            <th>
                                                 {{ $offer->amount }}  {{ $offer->quantity }}.
-                                            </td>
-                                            <td>
-                                                {{ $offer->price }}
-                                            </td>
-                                            <td>
+                                            </th>
+                                            <th>
+                                                {{ $offer->price }} lv.
+                                            </th>
+                                            <th>
                                                 {{ $offer->location }}
-                                            </td>
+                                            </th>
+                                            <th>
+                                                {{ $offer->created_at->diffForHumans() }}
+                                            </th>
                                             <td>
                                                 <div class="">
                                                     <div class="col-sm-6">
                                                         <!-- Button trigger modal -->
-                                                            <a href="{{ route('offers.show', $offer->id) }}" class="btn btn-primary">Show</a>
-
-                                                    </div>
-
-                                                    <div class="col-sm-6">
+                                                        <a href="{{ route('offers.edit', $offer->id) }}" class="btn btn-primary">Edit</a>
+                                                        <a href="{{ route('offers.show', $offer->id) }}" class="btn btn-primary">Show</a>
                                                         <form action="{{ route('offers.destroy', $offer->id) }}"
                                                               method="POST">
                                                             @csrf
@@ -74,27 +87,6 @@
                                     </tbody>
                                 </table> {{ $offers->links('pagination::bootstrap-5') }}
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="modal-body">
-                        @include('offers.edit')
-                        <!-- Add more offer details as needed -->
                     </div>
                 </div>
             </div>
@@ -159,79 +151,14 @@
                             <button type="button" id="closeModalBtn" class="btn btn-secondary closeModal"
                                     data-dismiss="modal">Close
                             </button>
-                            <button type="submit" class="btn btn-primary">Create Offer</button>
+                            <button type="submit" class="btn btn-primary">Create</button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="editOfferModal" tabindex="-1" role="dialog" aria-labelledby="editOfferModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editOfferModal">Edit Offer</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form id="editOfferForm">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="user_id">User</label>
-                            <input type="text" class="form-control" id="user_id" name="user_id"
-                                   value="{{ Auth::user()->name }}" readonly>
-                        </div>
-                        <div class="mb-6 ">
-                            <label class="form-label">Select Category</label>
-                            <select id="quantity" name="quantity" class="form-control">
-                                @foreach ($items as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" value="{{$offer->name}}">
-                        </div>
-                        <div class="form-group">
-                            <label for="description">Description</label>
-                            <input type="text" class="form-control" id="description" name="description" value="{{$offer->description}}">
-                        </div>
-                        <div class="form-group">
-                            <label for="amount">Amount</label>
-                            <input type="number" class="form-control" id="amount" name="amount" value="{{$offer->amount}}">
-                        </div>
-                        <div class="form-group">
-                            <label for="quantity">Quantity</label>
-                            <select class="form-select" id="quantity" name="quantity" aria-label="Quantity">
-                                <option value="kg" selected>kg</option>
-                                <option value="l">l</option>
-                                <option value="number">number</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="price">Price</label>
-                            <input type="number" class="form-control" id="price" name="price" value="{{$offer->price}}">
-                        </div>
-                        <div class="form-group">
-                            <label for="location">Location</label>
-                            <input type="text" class="form-control" id="location" name="location" value="{{$offer->location}}">
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" id="closeModalBtn" class="btn btn-secondary closeModal"
-                                    data-dismiss="modal">Close
-                            </button>
-                            <button type="submit" class="btn btn-primary">Edit Offer</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
     <script>
         setTimeout(function () {
             $('.alert-success').fadeOut('slow');

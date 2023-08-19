@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OfferRequest;
 use App\Models\Item;
 use App\Models\Offer;
 use Illuminate\Http\Request;
@@ -28,25 +29,8 @@ class OfferController extends Controller
         return view('offers.show', compact('offer'));
     }
 
-    public function store(Request $request)
+    public function store(OfferRequest $request)
     {
-      //  dd($request->all());
-        //dd($request->all());
-        // Validate the request data
-//        $validatedData = $request->validate([
-//            'user_id' => 'required', // You can adjust the validation rules as needed
-//            'item_id' => 'required',
-//            'description' => 'required',
-//            'amount' => 'required|numeric',
-//            'quantity' => 'required',
-//            'price' => 'required|numeric',
-//            'location' => 'required',
-//        ]);
-//
-//        if($validatedData->fails()){
-//            return response()->json(['message' => 'Offer created successfully']);
-//        }
-
         // Create a new offer using the validated data
         $offer = new Offer();
         $offer->user_id = auth()->user()->id;
@@ -64,10 +48,11 @@ class OfferController extends Controller
         return redirect()->back()->with('status', 'Offer created successfully');
     }
 
-    public function update(Request $request, $id)
+    public function update(OfferRequest $request, $id)
     {
         $offer = Offer::findOrFail($id);
 
+        $offer->user_id = auth()->user()->id;
         $offer->name = $request->name;
         $offer->description = $request->description;
         $offer->amount = $request->amount;
@@ -80,7 +65,7 @@ class OfferController extends Controller
         // ...
 
         session()->flash('status', 'Offer was updated');
-        return redirect()->back()->with('status', 'Offer updated successfully');
+        return redirect()->route('offers.index')->with('status', 'Offer updated successfully');
     }
 
     public function destroy($id)

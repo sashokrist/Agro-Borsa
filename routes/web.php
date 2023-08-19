@@ -27,3 +27,4 @@ Route::post('/offers', [OfferController::class, 'store'])->name('offers.store');
 Route::put('/offers/{id}', [OfferController::class, 'update'])->name('offers.update');
 Route::delete('/offers/{id}', [OfferController::class, 'destroy'])->name('offers.destroy');
 Route::get('/offers/{id}', [OfferController::class, 'show'])->name('offers.show');
+Route::get('/offers/edit/{id}', [OfferController::class, 'edit'])->name('offers.edit');
