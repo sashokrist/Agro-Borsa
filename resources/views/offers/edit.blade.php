@@ -81,14 +81,5 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-    <script>
-        $("#closeModalBtn").on("click", function () {
-            // Reset the form
-            $("#editOfferForm").reset();
-            // Hide the modal
-            $("#editOfferModal").style.display = "none";
-        });
-    </script>
 @endsection
 

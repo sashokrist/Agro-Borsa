@@ -7,17 +7,17 @@
                 {{ session('status') }}
             </div>
         @endif
-            @if($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+        @if($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-            <div class="row justify-content-center">
+        <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header text-center"><h1>{{ __('Offers Dashboard') }}</h1></div>
@@ -30,62 +30,67 @@
                         </div>
                         <br>
                         <div class="row">
-                                <table class="table table-striped">
-                                    <thead>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Offer/User</th>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Amount/Quantity</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Location</th>
+                                    <th scope="col">Published</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($offers as $offer)
                                     <tr>
-                                        <th scope="col">Offer/User</th>
-                                        <th scope="col">Product</th>
-                                        <th scope="col">Description</th>
-                                        <th scope="col">Amount/Quantity</th>
-                                        <th scope="col">Price</th>
-                                        <th scope="col">Location</th>
-                                        <th scope="col">Published</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($offers as $offer)
-                                        <tr>
-                                            <th>
-                                                {{ $offer->name }} <br> (ID: {{ $offer->id }}) by {{ $offer->user->name }}
-                                            </th>
-                                            <th>
-                                                {{ $offer->item->name }}
-                                            </th>
-                                            <th>
-                                                {{ $offer->description }}
-                                            </th>
-                                            <th>
-                                                {{ $offer->amount }}  {{ $offer->quantity }}.
-                                            </th>
-                                            <th>
-                                                {{ $offer->price }} lv.
-                                            </th>
-                                            <th>
-                                                {{ $offer->location }}
-                                            </th>
-                                            <th>
-                                                {{ $offer->created_at->diffForHumans() }}
-                                            </th>
-                                            <td>
-                                                <div class="">
-                                                    <div class="col-sm-6">
-                                                        <!-- Button trigger modal -->
-                                                        <a href="{{ route('offers.edit', $offer->id) }}" class="btn btn-primary">Edit</a>
-                                                        <a href="{{ route('offers.show', $offer->id) }}" class="btn btn-primary">Show</a>
-                                                        <form action="{{ route('offers.destroy', $offer->id) }}"
-                                                              method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger">Delete</button>
-                                                        </form>
-                                                    </div>
+                                        <th>
+                                            {{ $offer->name }} <br> (ID: {{ $offer->id }}) by {{ $offer->user->name }}
+                                        </th>
+                                        <th>
+                                            {{ $offer->item->name }}
+                                        </th>
+                                        <th>
+                                            {{ $offer->description }}
+                                        </th>
+                                        <th>
+                                            {{ $offer->amount }}  {{ $offer->quantity }}.
+                                        </th>
+                                        <th>
+                                            {{ $offer->price }} lv.
+                                        </th>
+                                        <th id="loc">
+                                            {{ $offer->location }}
+                                            <gmp-map center="42.69770050048828,23.32180404663086" zoom="14" map-id="map-container" class="map">
+                                                <gmp-advanced-marker position="42.69770050048828,23.32180404663086" title="My location"></gmp-advanced-marker>
+                                            </gmp-map>
+                                        </th>
+                                        <th>
+                                            {{ $offer->created_at->diffForHumans() }}
+                                        </th>
+                                        <td>
+                                            <div class="">
+                                                <div class="col-sm-6">
+                                                    <!-- Button trigger modal -->
+                                                    <a href="{{ route('offers.edit', $offer->id) }}"
+                                                       class="btn btn-primary">Edit</a>
+                                                    <a href="{{ route('offers.show', $offer->id) }}"
+                                                       class="btn btn-primary">Show</a>
+                                                    <form action="{{ route('offers.destroy', $offer->id) }}"
+                                                          method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table> {{ $offers->links('pagination::bootstrap-5') }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table> {{ $offers->links('pagination::bootstrap-5') }}
                         </div>
                     </div>
                 </div>
@@ -148,7 +153,7 @@
                             <input type="text" class="form-control" id="location" name="location">
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="closeModalBtn" class="btn btn-secondary closeModal"
+                            <button type="button" id="closeModal" class="btn btn-secondary closeModal"
                                     data-dismiss="modal">Close
                             </button>
                             <button type="submit" class="btn btn-primary">Create</button>
@@ -158,47 +163,43 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-    <script>
-        setTimeout(function () {
-            $('.alert-success').fadeOut('slow');
-        }, 9000);
-    </script>
 @endsection
+@section('scripts')
+    <script>
+        function initMap() {
+            var mapContainer = $('.map-container');
+            var map = new google.maps.Map(mapContainer, {
+                center: { lat: 42.69770050048828, lng: 23.32180404663086 },
+                zoom: 14
+            });
 
+            var marker = new google.maps.Marker({
+                position: { lat: 42.69770050048828, lng: 23.32180404663086 },
+                map: map,
+                title: 'My location'
+            });
+        }
+
+        // Trigger map initialization when the page is fully loaded
+        window.onload = function() {
+            initMap();
+        };
+    </script>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGJYxe8BCr3Ea4LVHSyJ01Qp9PRuNqgFI&callback=console.debug&libraries=maps,marker&v=beta" defer></script>
+@endsection
 @section('scripts')
     <script type="text/javascript">
-        $('#exampleModal').on('show', function(e) {
-            var link     = e.relatedTarget(),
-                modal    = $(this),
-                name = link.data("name"),
-                id    = link.data("id");
-
-            modal.find("#name").val(name);
-            modal.find("#id").val(id);
-        });
-
         $(document).ready(function () {
             $(".closeModal").click(function (e) {
                 e.preventDefault();
                 $("#createOfferForm")[0].reset(); // Reset the form
                 // Close the modal
-                $("#createOfferModal").modal('hide');
-            });
-
-            // Pass items data to modal when it's shown
-            $('#createOfferModal').on('show.bs.modal', function (event) {
-                // ... Existing code ...
-
-                // Enable draggable and resizable
-                modal.find('.draggable').draggable();
-                modal.find('.resizable').resizable();
+                $("#createOfferForm").modal('hide');
             });
 
             // Handle form submission
             $('#createOfferForm').submit(function (event) {
                 event.preventDefault();
-
                 $.ajax({
                     type: 'POST',
                     url: $(this).attr('action'),

@@ -21,10 +21,8 @@ return new class extends Migration
             $table->integer('amount');
             $table->integer('price');
             $table->string('location')->nullable();
-            $table->integer('position_x')->default(80);
-            $table->integer('position_y')->default(240);
-            $table->integer('width')->default(250);
-            $table->integer('height')->default(150);
+            $table->float('position_x')->default(42.69770050048828);
+            $table->float('position_y')->default(23.32180404663086);
             $table->timestamps();
         });
     }

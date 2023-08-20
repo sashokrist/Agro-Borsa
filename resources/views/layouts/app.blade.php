@@ -16,10 +16,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGJYxe8BCr3Ea4LVHSyJ01Qp9PRuNqgFI&callback=console.debug&libraries=maps,marker&v=beta"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
-{{--    <script src="{{ asset('js/app.js') }}" defer></script>--}}
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+    {{--    <script src="{{ asset('js/app.js') }}" defer></script>--}}
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -79,12 +82,24 @@
                 </div>
             </div>
         </nav>
-
         <main class="py-4">
             <div class="container">
                 @yield('content')
             </div>
         </main>
     </div>
+    <script>
+        setTimeout(function () {
+            $('.alert-success').fadeOut('slow');
+        }, 9000);
+    </script>
+    <script>
+        $("#closeModalBtn").on("click", function () {
+            // Reset the form
+            $("#editOfferForm").reset();
+            // Hide the modal
+            $("#editOfferModal").style.display = "none";
+        });
+    </script>
 </body>
 </html>
