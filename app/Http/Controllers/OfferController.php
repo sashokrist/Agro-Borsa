@@ -39,7 +39,8 @@ class OfferController extends Controller
         $offer->amount = $request->amount;
         $offer->quantity = $request->quantity;
         $offer->price = $request->price;
-        $offer->location = $request->location;
+        $offer->position_x = $request->longitude;
+        $offer->position_y = $request->altitude;
         $offer->item()->associate($request->item_id);
         $offer->save();
 

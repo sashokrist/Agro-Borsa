@@ -68,8 +68,11 @@
                                     <input type="number" class="form-control" id="price" name="price" value="{{ $offer->price }}">
                                 </div>
                                 <div class="form-group">
-                                    <label for="location">Location</label>
-                                    <input type="text" class="form-control" id="location" name="location" value="{{ $offer->location }}">
+                                    <label for="location">Location</label><br>
+                                    <label for="longitude">longitude</label>
+                                    <input type="number" class="form-control" id="location" name="longitude" placeholder="42.69770050048828">
+                                    <label for="altitude">altitude</label>
+                                    <input type="number" class="form-control" id="location" name="altitude" placeholder="23.32180404663086">
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" id="closeModalBtn">Close</button>

@@ -27,7 +27,7 @@ class OfferRequest extends FormRequest
             'amount' => 'required|numeric|between:0,99',
             'quantity' => 'required',
             'price' => 'required|numeric|between:0,99.99',
-            'location' => 'required|min:3|max:255',
+//            'location' => 'required|min:3|max:255',
         ];
     }
 }
