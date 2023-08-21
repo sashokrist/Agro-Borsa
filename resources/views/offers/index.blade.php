@@ -360,10 +360,13 @@
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/jumbotron/">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+{{--    <<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGJYxe8BCr3Ea4LVHSyJ01Qp9PRuNqgFI&callback=console.debug&libraries=maps,marker&v=beta" defer></script>--}}
+
+
     <style>
         body {
             padding-top: 3.5rem;
@@ -427,7 +430,6 @@
     <div class="container">
             <div class="card">
                 <div class="card-header text-center"> <h1>Dashboard</h1></div>
-
                 <div class="card-body">
                     <div class="text-center">
                         <button type="button" id="newOfferBtn" class="btn btn-success" data-toggle="modal"
@@ -474,8 +476,11 @@
                                         <gmp-map center="{{ $offer->position_x }},{{ $offer->position_y }}" zoom="14" map-id="map-container" class="map">
                                                     <gmp-advanced-marker position="{{ $offer->position_x }},{{ $offer->position_y }}" title="My location"></gmp-advanced-marker>
                                                 </gmp-map>
-                                        <div id="map"></div>
-                                        <div id="address"></div>
+
+                                        <div id="streetName">
+                                            <div id="map"></div>
+                                            <div id="address"></div>
+                                        </div>
                                     </th>
                                     <th>
                                         {{ $offer->created_at->diffForHumans() }}
@@ -585,6 +590,7 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGJYxe8BCr3Ea4LVHSyJ01Qp9PRuNqgFI&callback=console.debug&libraries=maps,marker&v=beta"  async defer></script>
 <script>
     $(document).ready(function () {
         // Handle form submission
@@ -614,33 +620,43 @@
 <script>
     function initMap() {
         var map = new google.maps.Map(document.getElementById('map'), {
-            center: { lat: 42.69770050048828, lng: 23.32180404663086 },
+            center: { lat: {{ $offer->position_x }}, lng: {{ $offer->position_y }} },
             zoom: 14
         });
 
         var geocoder = new google.maps.Geocoder();
+
         var location = {
             lat: {{ $offer->position_x }},
             lng: {{ $offer->position_y }}
         };
+        console.log(location);
 
         geocoder.geocode({ 'location': location }, function(results, status) {
             if (status === 'OK') {
                 if (results[0]) {
-                    var address = results[0].formatted_address;
-                    document.getElementById('address').textContent = address;
+                    var streetName = getAddressComponent(results[0], 'route');
+                    document.getElementById('streetName').textContent = 'Street Name: ' + streetName;
                 } else {
-                    document.getElementById('address').textContent = 'No results found';
+                    document.getElementById('streetName').textContent = 'No results found';
                 }
             } else {
-                document.getElementById('address').textContent = 'Geocoder failed due to: ' + status;
+                document.getElementById('streetName').textContent = 'Geocoder failed due to: ' + status;
             }
         });
     }
-
+    function getAddressComponent(result, type) {
+        for (var i = 0; i < result.address_components.length; i++) {
+            var component = result.address_components[i];
+            for (var j = 0; j < component.types.length; j++) {
+                if (component.types[j] === type) {
+                    return component.long_name;
+                }
+            }
+        }
+        return '';
+    }
     initMap();
     </script>
-    <script>
 
-    </script>
 </html>
