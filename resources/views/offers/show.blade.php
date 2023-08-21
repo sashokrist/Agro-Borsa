@@ -1,5 +1,15 @@
 @extends('layouts.app')
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsMQR7Tbrq05SKwLJrXAITHnARIx9kdG8&callback=console.debug&libraries=maps,marker&v=beta"  async defer></script>
+<style>
+    body {
+        /*padding-top: 3.5rem;*/
+    }
 
+    gmp-map {
+        height: 400px;
+        width: 400px;
+    }
+</style>
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -31,18 +41,15 @@
                                 <h3 class="mb-0">Price:</h3>
                                 <h4>{{ $offer->price }}</h4>
                             </div>
-                            <div class="list-group-item">
+                            <div>
                                 <h3 class="mb-0">Location:</h3>
-                                <h4>{{ $offer->location }}</h4>
-                                <div id="streetName">
-                                    <div id="map"></div>
-                                    <div id="address"></div>
-                                </div>
+                                <gmp-map center="{{ $offer->position_x }},{{ $offer->position_y }}" zoom="14" map-id="map-container" class="map">
+                                    <gmp-advanced-marker position="{{ $offer->position_x }},{{ $offer->position_y }}" title="My location"></gmp-advanced-marker>
+                                </gmp-map>
                                 <div id="map"></div>
                                 <div id="address"></div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -52,19 +59,18 @@
 <script>
     function initMap() {
         var map = new google.maps.Map(document.getElementById('map'), {
-            center: { lat: 42.69770050048828, lng: 23.32180404663086 },
+            center: {lat: {{ $offer->position_x }}, lng: {{ $offer->position_y }}},
             zoom: 14
         });
 
         var geocoder = new google.maps.Geocoder();
 
-        var location = { lat: 42.69770050048828, lng: 23.32180404663086 };
+        var location = { lat: {{ $offer->position_x }}, lng: {{ $offer->position_y }} };
 
         geocoder.geocode({ 'location': location }, function(results, status) {
             if (status === 'OK') {
                 if (results[0]) {
-                    var address = results[0].formatted_address;
-                    document.getElementById('address').textContent = address;
+                    document.getElementById('address').textContent = results[0].formatted_address;
                 } else {
                     document.getElementById('address').textContent = 'No results found';
                 }
