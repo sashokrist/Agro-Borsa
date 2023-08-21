@@ -1,16 +1,74 @@
-@extends('layouts.app')
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsMQR7Tbrq05SKwLJrXAITHnARIx9kdG8&callback=console.debug&libraries=maps,marker&v=beta"  async defer></script>
-<style>
-    body {
-        /*padding-top: 3.5rem;*/
-    }
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-    gmp-map {
-        height: 400px;
-        width: 400px;
-    }
-</style>
-@section('content')
+
+    <title>Jumbotron Template for Bootstrap</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/jumbotron/">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsMQR7Tbrq05SKwLJrXAITHnARIx9kdG8&callback=console.debug&libraries=maps,marker&v=beta"  async defer></script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    {{--    <<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGJYxe8BCr3Ea4LVHSyJ01Qp9PRuNqgFI&callback=console.debug&libraries=maps,marker&v=beta" defer></script>--}}
+
+
+    <style>
+        body {
+            padding-top: 3.5rem;
+        }
+
+        gmp-map {
+            height: 400px;
+            width: 400px;
+        }
+    </style>
+
+</head>
+
+<body>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" href="#">Disabled</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                <div class="dropdown-menu" aria-labelledby="dropdown01">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+</nav>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -19,7 +77,7 @@
 
                 <div class="card-body offer">
                     <div class=" text-center">
-                        <a href="{{ route('offers.index') }}" class="btn btn-primary" id="back-button">back ot all offers</a>
+                        <a href="{{ route('offers.index') }}" class="btn btn-primary" id="back-button">back</a>
                         <div class="list-group">
                             <div class="list-group-item">
                                 <h3 class="mb-0">Product:</h3>
@@ -39,11 +97,11 @@
                             </div>
                             <div class="list-group-item">
                                 <h3 class="mb-0">Price:</h3>
-                                <h4>{{ $offer->price }}</h4>
+                                <h4>{{ $offer->price }}lv.</h4>
                             </div>
-                            <div>
+                            <div class="list-group-item">
                                 <h3 class="mb-0">Location:</h3>
-                                <gmp-map center="{{ $offer->position_x }},{{ $offer->position_y }}" zoom="14" map-id="map-container" class="map">
+                                <gmp-map center="{{ $offer->position_x }},{{ $offer->position_y }}" zoom="10" map-id="map-container" class="map text-center">
                                     <gmp-advanced-marker position="{{ $offer->position_x }},{{ $offer->position_y }}" title="My location"></gmp-advanced-marker>
                                 </gmp-map>
                                 <div id="map"></div>
@@ -56,16 +114,19 @@
         </div>
     </div>
 </div>
+</body>
 <script>
     function initMap() {
+        var positionX = parseFloat({{ $offer->position_x }});
+        var positionY = parseFloat({{ $offer->position_y }});
+
         var map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: {{ $offer->position_x }}, lng: {{ $offer->position_y }}},
+            center: {lat: positionX, lng: positionY},
             zoom: 14
         });
 
         var geocoder = new google.maps.Geocoder();
-
-        var location = { lat: {{ $offer->position_x }}, lng: {{ $offer->position_y }} };
+        var location = { lat: positionX, lng: positionY };
 
         geocoder.geocode({ 'location': location }, function(results, status) {
             if (status === 'OK') {
@@ -81,4 +142,4 @@
     }
     initMap();
 </script>
-@endsection
+</html>

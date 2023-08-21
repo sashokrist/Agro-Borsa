@@ -131,7 +131,7 @@
                                     {{ $offer->price }} lv.
                                 </th>
                                 <th>
-                                    <gmp-map center="{{ $offer->position_x }},{{ $offer->position_y }}" zoom="14"
+                                    <gmp-map center="{{ $offer->position_x }},{{ $offer->position_y }}" zoom="8"
                                              map-id="map-container" class="map">
                                         <gmp-advanced-marker
                                             position="{{ $offer->position_x }},{{ $offer->position_y }}"
@@ -139,10 +139,10 @@
                                     </gmp-map>
                                     <div id="map"></div>
                                     <div id="address"></div>
-                                    <div id="streetName">
-                                        <div id="map"></div>
-                                        <div id="address"></div>
-                                    </div>
+{{--                                    <div id="streetName">--}}
+{{--                                        <div id="map"></div>--}}
+{{--                                        <div id="address"></div>--}}
+{{--                                    </div>--}}
                                 </th>
                                 <th>
                                     {{ $offer->created_at->diffForHumans() }}
@@ -295,14 +295,16 @@
 </script>
 <script>
     function initMap() {
+        var positionX = parseFloat({{ $offer->position_x }});
+        var positionY = parseFloat({{ $offer->position_y }});
+
         var map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: {{ $offer->position_x }}, lng: {{ $offer->position_y }}},
+            center: {lat: positionX, lng: positionY},
             zoom: 14
         });
 
         var geocoder = new google.maps.Geocoder();
-
-        var location = { lat: {{ $offer->position_x }}, lng: {{ $offer->position_y }} };
+        var location = { lat: positionX, lng: positionY };
 
         geocoder.geocode({ 'location': location }, function(results, status) {
             if (status === 'OK') {
