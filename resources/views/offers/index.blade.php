@@ -7,7 +7,7 @@
     <meta name="author" content="">
 
 
-    <title>Jumbotron Template for Bootstrap</title>
+    <title> agro Borsa</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/jumbotron/">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
@@ -136,7 +136,7 @@
                         </thead>
                         <tbody>
                         @foreach($offers as $offer)
-                            <tr>
+                            <tr  style="{{ $offer->created_at->diffInDays(now()) > 30 ? 'background: red;' : '' }}">
                                 <th>
                                     {{ $offer->name }} <br> (ID: {{ $offer->id }}) by {{ $offer->user->name }}
                                 </th>

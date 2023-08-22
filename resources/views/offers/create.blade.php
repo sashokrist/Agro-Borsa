@@ -7,7 +7,7 @@
     <meta name="author" content="">
 
 
-    <title>Jumbotron Template for Bootstrap</title>
+    <title> agro Borsa</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/jumbotron/">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
@@ -177,7 +177,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <a class="btn btn-danger" href="{{ route('offers.index') }}">{{ __('Close') }}</a>
-                                    <button type="submit" class="btn btn-primary">Edit</button>
+                                    <button type="submit" class="btn btn-primary">Create</button>
                                 </div>
                             </form>
                     </div>
