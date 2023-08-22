@@ -24,6 +24,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::group(['middleware' => 'auth',],function () {
         Route::get('/offers', [OfferController::class, 'index'])->name('offers.index');
+        Route::get('/offers/create', [OfferController::class, 'create'])->name('offers.create');
         Route::post('/offers', [OfferController::class, 'store'])->name('offers.store');
         Route::put('/offers/{id}', [OfferController::class, 'update'])->name('offers.update');
         Route::delete('/offers/{id}', [OfferController::class, 'destroy'])->name('offers.destroy');

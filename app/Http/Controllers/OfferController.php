@@ -16,6 +16,12 @@ class OfferController extends Controller
         return view('offers.index', compact('offers', 'items'));
     }
 
+    public function create()
+    {
+        $items = Item::all();
+        return view('offers.create', compact('items'));
+    }
+
     public function edit($id)
     {
         $offer = Offer::findOrFail($id);

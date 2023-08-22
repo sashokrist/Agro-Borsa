@@ -15,20 +15,30 @@
 
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
-    {{--    <script src="https://code.jquery.com/jquery-3.3.1.min.js"--}}
-    {{--            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>--}}
-    {{--    <<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGJYxe8BCr3Ea4LVHSyJ01Qp9PRuNqgFI&callback=console.debug&libraries=maps,marker&v=beta" defer></script>--}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#street-name').on('blur', function() {
+                var streetName = $(this).val();
 
-    <style>
-        body {
-            padding-top: 3.5rem;
-        }
+                if (streetName !== '') {
+                    // Replace 'YOUR_API_KEY' with your actual Google Maps API key
+                    var apiKey = 'YOUR_API_KEY';
+                    var geocodingApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(streetName)}&key=AIzaSyBsMQR7Tbrq05SKwLJrXAITHnARIx9kdG8`;
 
-        gmp-map {
-            height: 300px;
-            width: 300px;
-        }
-    </style>
+                    $.get(geocodingApiUrl, function(data) {
+                        if (data.status === 'OK' && data.results.length > 0) {
+                            var location = data.results[0].geometry.location;
+                            $('#longitude').val(location.lng);
+                            $('#altitude').val(location.lat);
+                        } else {
+                            alert('Geocoding error: Unable to retrieve coordinates for the provided street name.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -97,7 +107,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header"><h4>{{ __('Edit') }}</h4></div>
+                    <div class="card-header"><h4>{{ __('Create') }}</h4></div>
 
                     <div class="card-body">
                         @if (session('status'))
@@ -114,7 +124,7 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form action="{{ route('offers.update', $offer->id) }}" method="POST" class="form-control" id="editOfferForm">
+                            <form action="" method="POST" class="form-control" id="editOfferForm">
                                 @csrf
                                 @method('PUT')
                                 <div class="form-group">
@@ -128,7 +138,7 @@
                                         <label for="item_id">Item to sale</label>
                                         <select class="form-control" id="item_id" name="item_id">
                                             @foreach($items as $item)
-                                                <option value="{{ $item->id }}" @if(old('item_id', $offer->item_id) == $item->id) selected @endif>{{ $item->name }}</option>
+                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -136,35 +146,34 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" value="{{ $offer->name }}">
+                                    <input type="text" class="form-control" id="name" name="name" >
                                 </div>
                                 <div class="form-group">
                                     <label for="description">Description</label>
-                                    <input type="text" class="form-control" id="description" name="description" value="{{ $offer->description }}">
+                                    <input type="text" class="form-control" id="description" name="description">
                                 </div>
                                 <div class="form-group">
                                     <label for="amount">Amount</label>
-                                    <input type="number" class="form-control" id="amount" name="amount" value="{{ $offer->amount }}">
+                                    <input type="number" class="form-control" id="amount" name="amount">
                                 </div>
                                 <div class="form-group">
                                     <label for="quantity">Quantity</label>
                                     <select class="form-select" id="quantity" name="quantity" aria-label="Quantity">
-                                        <option value="kg" @if(old('quantity', $offer->quantity) == 'kg') selected @endif>kg</option>
-                                        <option value="l" @if(old('quantity', $offer->quantity) == 'l') selected @endif>l</option>
-                                        <option value="number" @if(old('quantity', $offer->quantity) == 'number') selected @endif>number</option>
+                                        <option value="kg">kg</option>
+                                        <option value="l">l</option>
+                                        <option value="number">number</option>
                                     </select>
 
                                 </div>
                                 <div class="form-group">
                                     <label for="price">Price</label>
-                                    <input type="number" class="form-control" id="price" name="price" value="{{ $offer->price }}">
+                                    <input type="number" class="form-control" id="price" name="price">
                                 </div>
                                 <div class="form-group">
                                     <label for="location">Location</label><br>
-                                    <label for="longitude">longitude</label>
-                                    <input type="number" class="form-control" id="location" name="longitude" placeholder="42.69770050048828">
-                                    <label for="altitude">altitude</label>
-                                    <input type="number" class="form-control" id="location" name="altitude" placeholder="23.32180404663086">
+                                    <input type="text" id="street-name" class="street-name" value="Street name">
+                                    <input type="number" id="longitude" class="longitude">
+                                    <input type="number" id="altitude" class="altitude">
                                 </div>
                                 <div class="modal-footer">
                                     <a class="btn btn-danger" href="{{ route('offers.index') }}">{{ __('Close') }}</a>
@@ -181,4 +190,3 @@
     </footer>
 </body>
 </html>
-
