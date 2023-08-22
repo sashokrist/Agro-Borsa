@@ -29,8 +29,8 @@
                     $.get(geocodingApiUrl, function(data) {
                         if (data.status === 'OK' && data.results.length > 0) {
                             var location = data.results[0].geometry.location;
-                            $('#longitude').val(location.lng);
-                            $('#altitude').val(location.lat);
+                            $('#altitude').val(location.lng);
+                            $('#longitude').val(location.lat);
                         } else {
                             alert('Geocoding error: Unable to retrieve coordinates for the provided street name.');
                         }
@@ -124,9 +124,8 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form action="" method="POST" class="form-control" id="editOfferForm">
+                            <form action="{{ route('offers.store') }}" method="POST" class="form-control" id="editOfferForm">
                                 @csrf
-                                @method('PUT')
                                 <div class="form-group">
                                     <label for="user_id">User</label>
                                     <input type="text" class="form-control" id="user_id" name="user_id"
@@ -172,8 +171,8 @@
                                 <div class="form-group">
                                     <label for="location">Location</label><br>
                                     <input type="text" id="street-name" class="street-name" value="Street name">
-                                    <input type="number" id="longitude" class="longitude">
-                                    <input type="number" id="altitude" class="altitude">
+                                    <input type="number" step="any"     id="longitude" name="longitude">
+                                    <input type="number" step="any"  id="altitude" name="altitude">
                                 </div>
                                 <div class="modal-footer">
                                     <a class="btn btn-danger" href="{{ route('offers.index') }}">{{ __('Close') }}</a>
