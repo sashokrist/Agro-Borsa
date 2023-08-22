@@ -75,7 +75,7 @@
                                     <input type="number" class="form-control" id="location" name="altitude" placeholder="23.32180404663086">
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" id="closeModalBtn">Close</button>
+                                    <a class="btn btn-danger" href="{{ route('offers.index') }}">{{ __('Close') }}</a>
                                     <button type="submit" class="btn btn-primary">Edit</button>
                                 </div>
                             </form>
@@ -84,5 +84,8 @@
             </div>
         </div>
     </div>
+    <footer class="container text-center">
+        <p>&copy; <strong>SJ 2023</strong></p>
+    </footer>
 @endsection
 

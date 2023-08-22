@@ -15,12 +15,9 @@
 
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsMQR7Tbrq05SKwLJrXAITHnARIx9kdG8&callback=console.debug&libraries=maps,marker&v=beta"  async defer></script>
-
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
-            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+{{--    <script src="https://code.jquery.com/jquery-3.3.1.min.js"--}}
+{{--            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>--}}
     {{--    <<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGJYxe8BCr3Ea4LVHSyJ01Qp9PRuNqgFI&callback=console.debug&libraries=maps,marker&v=beta" defer></script>--}}
-
 
     <style>
         body {
@@ -28,41 +25,68 @@
         }
 
         gmp-map {
-            height: 200px;
-            width: 200px;
+            height: 300px;
+            width: 300px;
         }
     </style>
-
 </head>
-
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
-            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+    <a class="navbar-brand" href="{{ route('offers.index') }}">Home</a>
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
-            </li>
+            @guest
+                @if (Route::has('login'))
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                    </li>
+                @endif
+
+                @if (Route::has('register'))
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                    </li>
+                @endif
+            @else
+            @endguest
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                <a class="nav-link dropdown-toggle" href="{{ route('offers.index') }}" id="dropdown01" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }}</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown01">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-            </li>
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="{{ route('offers.index') }}>
+                            {{ Auth::user()->name }}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" style="color: blue;">
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                               onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
+                            </a>
+
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        </div>
+            <!-- Authentication Links -->
+            @guest
+                @if (Route::has('login'))
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                    </li>
+                @endif
+
+                @if (Route::has('register'))
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                    </li>
+                @endif
+            @else
+
+            @endguest
         </ul>
+        <button type="button" id="newOfferBtn" class="btn btn-success" data-toggle="modal"
+                data-target="#createOfferModal">New Offer
+        </button>
         <form class="form-inline my-2 my-lg-0">
             <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
@@ -89,14 +113,11 @@
         <div class="card">
             <div class="card-header text-center"><h1>Dashboard</h1></div>
             <div class="card-body">
-                <div class="text-center">
-                    <button type="button" id="newOfferBtn" class="btn btn-success" data-toggle="modal"
-                            data-target="#createOfferModal">New Offer
-                    </button>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createOfferModal">
-                        Launch demo modal
-                    </button>
-                </div>
+{{--                <div class="text-center">--}}
+{{--                    <button type="button" id="newOfferBtn" class="btn btn-success" data-toggle="modal"--}}
+{{--                            data-target="#createOfferModal">New Offer--}}
+{{--                    </button>--}}
+{{--                </div>--}}
                 <br>
                 <div class="row">
                     <table class="table table-striped">
@@ -176,8 +197,8 @@
             </div>
         </div>
     </div> <!-- /container -->
-    <footer class="container">
-        <p>&copy; Company 2017-2018</p>
+    <footer class="container text-center">
+        <p>&copy; <strong>SJ 2023</strong></p>
     </footer>
     <!-- Create Offer Modal -->
     <div class="modal fade" id="createOfferModal" tabindex="-1" role="dialog" aria-labelledby="createOfferModalLabel"
@@ -216,7 +237,6 @@
                         </div>
                         <div class="form-group">
                             <label for="amount">Amount</label>
-                            {{--                                <input type="number" class="form-control" id="amount" name="amount">--}}
                             <div><label>Amount $
                                     <input type="number" id="amount" name="amount" placeholder="0.00" required min="0"
                                            value="0" step="0.01" title="Currency" pattern="^\d+(?:\.\d{1,2})?$" onblur="
@@ -260,12 +280,16 @@
     </div>
 </main>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
-        integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
-        crossorigin="anonymous"></script>
+{{--<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"--}}
+{{--        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"--}}
+{{--        crossorigin="anonymous"></script>--}}
+{{--<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"--}}
+{{--        integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"--}}
+{{--        crossorigin="anonymous"></script>--}}
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsMQR7Tbrq05SKwLJrXAITHnARIx9kdG8&callback=console.debug&libraries=maps,marker&v=beta"  async defer></script>
 
 <script>
     $(document).ready(function () {
@@ -293,33 +317,33 @@
         $('.alert-success').fadeOut('slow');
     }, 9000);
 </script>
-<script>
-    function initMap() {
-        var positionX = parseFloat({{ $offer->position_x }});
-        var positionY = parseFloat({{ $offer->position_y }});
+{{--<script>--}}
+{{--    function initMap() {--}}
+{{--        var positionX = parseFloat({{ $offer->position_x }});--}}
+{{--        var positionY = parseFloat({{ $offer->position_y }});--}}
 
-        var map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: positionX, lng: positionY},
-            zoom: 14
-        });
+{{--        var map = new google.maps.Map(document.getElementById('map'), {--}}
+{{--            center: {lat: positionX, lng: positionY},--}}
+{{--            zoom: 14--}}
+{{--        });--}}
 
-        var geocoder = new google.maps.Geocoder();
-        var location = { lat: positionX, lng: positionY };
+{{--        var geocoder = new google.maps.Geocoder();--}}
+{{--        var location = { lat: positionX, lng: positionY };--}}
 
-        geocoder.geocode({ 'location': location }, function(results, status) {
-            if (status === 'OK') {
-                if (results[0]) {
-                    document.getElementById('address').textContent = results[0].formatted_address;
-                } else {
-                    document.getElementById('address').textContent = 'No results found';
-                }
-            } else {
-                document.getElementById('address').textContent = 'Geocoder failed due to: ' + status;
-            }
-        });
-    }
-    initMap();
-</script>
+{{--        geocoder.geocode({ 'location': location }, function(results, status) {--}}
+{{--            if (status === 'OK') {--}}
+{{--                if (results[0]) {--}}
+{{--                    document.getElementById('address').textContent = results[0].formatted_address;--}}
+{{--                } else {--}}
+{{--                    document.getElementById('address').textContent = 'No results found';--}}
+{{--                }--}}
+{{--            } else {--}}
+{{--                document.getElementById('address').textContent = 'Geocoder failed due to: ' + status;--}}
+{{--            }--}}
+{{--        });--}}
+{{--    }--}}
+{{--    initMap();--}}
+{{--</script>--}}
 {{--<script>--}}
 {{--    function initMap() {--}}
 {{--        var map = new google.maps.Map(document.getElementById('map'), {--}}
