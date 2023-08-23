@@ -177,7 +177,7 @@
                                             @if($offer->user_id == Auth::user()->id)
                                                 <!-- Button trigger modal -->
                                                 <a href="{{ route('offers.edit', $offer->id) }}"
-                                                   class="btn btn-primary">Edit</a>
+                                                   class="btn btn-secondary">Edit</a>
 
                                                 <form action="{{ route('offers.destroy', $offer->id) }}"
                                                       method="POST">

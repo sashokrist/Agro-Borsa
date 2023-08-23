@@ -160,9 +160,9 @@
                                 <div class="form-group">
                                     <label for="location">Location</label><br>
                                     <label for="longitude">longitude</label>
-                                    <input type="number" class="form-control" id="location" name="longitude" placeholder="42.69770050048828">
+                                    <input type="number" class="form-control" id="longitude" name="longitude" value="{{ $offer->position_x }}">
                                     <label for="altitude">altitude</label>
-                                    <input type="number" class="form-control" id="location" name="altitude" placeholder="23.32180404663086">
+                                    <input type="number" class="form-control" id="altitude" name="altitude" value="{{ $offer->position_y }}">
                                 </div>
                                 <div class="modal-footer">
                                     <a class="btn btn-danger" href="{{ route('offers.index') }}">{{ __('Close') }}</a>
